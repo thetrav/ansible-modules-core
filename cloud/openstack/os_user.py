@@ -161,12 +161,16 @@ def main():
     enabled = module.params['enabled']
     state = module.params['state']
 
+    shade_params = { key: module.params[key]
+                 for key in module.params
+                 if key != 'password' }
+
     try:
-        cloud = shade.openstack_cloud(**module.params)
+        cloud = shade.openstack_cloud(**shade_params)
         user = cloud.get_user(name)
 
         if domain:
-            opcloud = shade.operator_cloud(**module.params)
+            opcloud = shade.operator_cloud(**shade_params)
             try:
                 # We assume admin is passing domain id
                 dom = opcloud.get_domain(domain)['id']
